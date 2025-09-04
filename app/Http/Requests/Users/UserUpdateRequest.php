@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Users;
 
+use App\Models\User;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserStoreRequest extends FormRequest
+class UserUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +25,15 @@ class UserStoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', 'min:8'],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                Rule::unique(User::class)->ignore($this->route('user')),
+            ],
+            'password' => ['nullable', 'confirmed', 'min:8'],
         ];
     }
 }

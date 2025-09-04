@@ -19,6 +19,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import ActionDropdown from '@/components/admin/ActionDropdown.vue';
 
 const props = defineProps<{
     users: {
@@ -33,6 +34,10 @@ const props = defineProps<{
         total: number;
         per_page: number;
         current_page: number;
+        // previous page URL
+        prev_page_url: string;
+        // next page URL
+        next_page_url: string;
     }
 }>();
 
@@ -96,8 +101,11 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <TableCell class="text-center">
                                 {{ user.created_at }}
                             </TableCell>
-                            <TableCell>
-
+                            <TableCell class="text-center">
+                                <ActionDropdown
+                                    :editUrl="`/admin/users/${user.id}/edit`"
+                                    :deleteUrl="`/admin/users/${user.id}`"
+                                />
                             </TableCell>
                         </TableRow>
                         <TableRow v-if="!props.users.data.length">
@@ -113,21 +121,22 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <div>
                     <Pagination v-slot="{ page }" :items-per-page="props.users.per_page" :total="props.users.total" :default-page="props.users.current_page">
                         <PaginationContent v-slot="{ items }">
-                        <PaginationPrevious />
+                            <PaginationPrevious @click="router.visit(users.prev_page_url)" />
 
-                        <template v-for="(item, index) in items" :key="index">
-                            <PaginationItem
-                            v-if="item.type === 'page'"
-                            :value="item.value"
-                            :is-active="item.value === page"
-                            >
-                            {{ item.value }}
-                            </PaginationItem>
-                        </template>
+                            <template v-for="(item, index) in items" :key="index">
+                               <PaginationItem
+                                    v-if="item.type === 'page'"
+                                    :value="item.value"
+                                    :is-active="item.value === page"
+                                    @click="router.visit(`/admin/users?page=${item.value}`)"
+                                >
+                                    {{ item.value }}
+                                </PaginationItem>
+                            </template>
 
-                        <!-- <PaginationEllipsis :index="4" /> -->
+                            <!-- <PaginationEllipsis :index="4" /> -->
 
-                        <PaginationNext />
+                            <PaginationNext @click="router.visit(users.next_page_url)" />
                         </PaginationContent>
                     </Pagination>
                 </div>

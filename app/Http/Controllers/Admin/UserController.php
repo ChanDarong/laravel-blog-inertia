@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use Inertia\Inertia;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\Users\UserStoreRequest;
+use App\Http\Requests\Users\UserUpdateRequest;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -16,7 +17,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::latest()
-            ->paginate(10)
+            ->paginate(1)
             ->withQueryString();
         return Inertia::render('admin/users/Index', [
             'users' => $users
@@ -46,7 +47,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+
     }
 
     /**
@@ -54,15 +55,21 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        return Inertia::render('admin/users/Edit', [
+            'user' => $user
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UserUpdateRequest $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->update($request->validated());
+
+        return redirect()->route('admin.users.index')->with('success', 'User updated successfully!');
     }
 
     /**
@@ -70,6 +77,9 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully!');
     }
 }

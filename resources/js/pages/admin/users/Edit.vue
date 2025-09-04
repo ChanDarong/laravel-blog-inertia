@@ -20,6 +20,16 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form'
+import FormDescription from '@/components/ui/form/FormDescription.vue';
+
+const props = defineProps<{
+    user: {
+        id: number;
+        name: string;
+        email: string;
+        created_at: string;
+    }
+}>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -31,24 +41,36 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/admin/users',
     },
     {
-        title: 'Create',
-        href: '/admin/users/create',
+        title: 'Edit',
+        href: `/admin/users/${props.user.id}/edit`,
     }
 ];
 
 const formSchema = toTypedSchema(z.object({
     name: z.string({ message: 'Name is required' }).min(2, 'Name must be at least 2 characters').max(50, 'Name must not exceed 50 characters'),
     email: z.string({ message: 'Email is required' }).email('Please enter a valid email address'),
-    password: z.string({ message: 'Password is required' }).min(6, 'Password must be at least 6 characters').max(100, 'Password must not exceed 100 characters'),
-    password_confirmation: z.string({ message: 'Password confirmation is required' }).min(6, 'Password confirmation must be at least 6 characters').max(100, 'Password confirmation must not exceed 100 characters'),
-}).refine((data) => data.password === data.password_confirmation, {
+    password: z.string().min(6, 'Password must be at least 6 characters').max(100, 'Password must not exceed 100 characters').optional().or(z.literal('')),
+    password_confirmation: z.string().optional().or(z.literal('')),
+}).refine((data) => {
+    // Only validate password confirmation if password is provided and not empty
+    if (data.password && data.password.length > 0) {
+        return data.password === data.password_confirmation;
+    }
+    return true;
+}, {
     message: 'Passwords do not match',
     path: ['password_confirmation'],
 }));
 
-const { isFieldDirty, handleSubmit, isSubmitting, errors: formErrors, meta } = useForm({
-  validationSchema: formSchema,
-  validateOnMount: false,
+const { isFieldDirty, handleSubmit, isSubmitting, errors: formErrors, meta, validate } = useForm({
+    validationSchema: formSchema,
+    initialValues: {
+        name: props.user?.name || '',
+        email: props.user?.email || '',
+        password: '',
+        password_confirmation: '',
+    },
+    validateOnMount: false,
 })
 
 // Check if form is valid (no errors and all fields are valid)
@@ -56,6 +78,19 @@ const isFormValid = computed(() => {
     // Don't block submission due to pending validation - let the form handle it
     return Object.keys(formErrors.value).length === 0
 })
+
+// Manual submit function to handle button clicks
+// const handleFormSubmit = async () => {
+//     // Validate all fields first
+//     const result = await validate();
+//     if (result.valid) {
+//         // Trigger the actual form submission
+//         const formElement = document.querySelector('form');
+//         if (formElement) {
+//             formElement.requestSubmit();
+//         }
+//     }
+// }
 
 // Handle flash messages from controller
 const page = usePage()
@@ -78,11 +113,18 @@ onMounted(() => {
 
 // Handle form submission with Inertia
 const onSubmit = handleSubmit((values) => {
+    // Remove empty password fields for edit mode
+    const submitData = { ...values };
+    if (!submitData.password || submitData.password.length === 0) {
+        delete submitData.password;
+        delete submitData.password_confirmation;
+    }
+
     // Use Inertia's router for submission
-    router.post('/admin/users', values, {
+    router.put(`/admin/users/${props.user.id}`, submitData, {
         onSuccess: (page) => {
             // Show success notification
-            Notify.success('User created successfully!');
+            Notify.success('User updated successfully!');
             // Handle success (redirect is handled by backend)
         },
         onError: (errors: any) => {
@@ -115,7 +157,8 @@ const onSubmit = handleSubmit((values) => {
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="px-4 py-6">
-            <h1 class="text-2xl font-semibold">Create User</h1>
+            <h1 class="text-2xl font-semibold">Edit User</h1>
+
             <form @submit="onSubmit" class="space-y-6 my-6">
                 <div v-auto-animate class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-2">
@@ -164,6 +207,9 @@ const onSubmit = handleSubmit((values) => {
                                         :class="{ 'border-destructive focus:border-destructive': formErrors.password }"
                                     />
                                 </FormControl>
+                                <FormDescription>
+                                    Leave blank to keep the current password.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         </FormField>
@@ -195,8 +241,8 @@ const onSubmit = handleSubmit((values) => {
                         type="submit"
                         :disabled="!isFormValid || isSubmitting"
                     >
-                        <span v-if="isSubmitting">Creating...</span>
-                        <span v-else>Save</span>
+                        <span v-if="isSubmitting">Updating...</span>
+                        <span v-else>Update</span>
                     </Button>
                 </div>
 
