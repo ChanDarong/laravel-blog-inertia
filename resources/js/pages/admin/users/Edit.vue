@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { computed, onMounted } from 'vue';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { usePage } from '@inertiajs/vue3';
+import { LoaderCircle } from 'lucide-vue-next';
 
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod'
@@ -241,7 +242,7 @@ const onSubmit = handleSubmit((values) => {
                         type="submit"
                         :disabled="!isFormValid || isSubmitting"
                     >
-                        <span v-if="isSubmitting">Updating...</span>
+                        <LoaderCircle v-if="isSubmitting" class="h-4 w-4 animate-spin" />
                         <span v-else>Update</span>
                     </Button>
                 </div>
