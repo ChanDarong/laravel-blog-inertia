@@ -4,6 +4,9 @@ import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as userIndex } from '@/routes/admin/users';
+import { index as blogCategoryIndex } from '@/routes/admin/blog-categories';
+
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import { BookOpen, Folder, LayoutGrid, UserCog } from 'lucide-vue-next';
@@ -17,8 +20,13 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'User',
-        href: '/admin/users',
+        href: userIndex(),
         icon: UserCog,
+    },
+    {
+        title: 'BlogCategory',
+        href: blogCategoryIndex(),
+        icon: Folder,
     }
 ];
 
@@ -32,7 +40,7 @@ const footerNavItems: NavItem[] = [
         title: 'Documentation',
         href: 'https://laravel.com/docs/starter-kits#vue',
         icon: BookOpen,
-    },
+    }
 ];
 </script>
 

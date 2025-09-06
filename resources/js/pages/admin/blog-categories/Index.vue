@@ -10,16 +10,30 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Badge } from '@/components/ui/badge'
 import { Trash2, Edit, Eye, Plus, Search } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
+import TableFooter from '@/components/ui/table/TableFooter.vue';
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose
+} from '@/components/ui/dialog'
+
 
 import ActionDropdown from '@/components/admin/ActionDropdown.vue';
 import TablePagination from '@/components/admin/TablePagination.vue';
+import Create from './Create.vue';
 
 const props = defineProps<{
-    users: {
+    categories: {
         data: Array<{
             id: number;
             name: string;
-            email: string;
+            // email: string;
             created_at: string;
         }>;
         from: number;
@@ -40,14 +54,14 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: dashboard().url,
     },
     {
-        title: 'Users',
-        href: '/admin/users',
+        title: 'Blog Categories',
+        href: '/admin/blog-categories',
     }
 ];
 </script>
 
 <template>
-    <Head title="Users" />
+    <Head title="Blog Categories" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
 
@@ -55,18 +69,16 @@ const breadcrumbs: BreadcrumbItem[] = [
             <!-- Header -->
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-2xl font-semibold">Users</h1>
-                    <p class="text-muted-foreground">Manage your users</p>
+                    <h1 class="text-2xl font-semibold">Blog Categories</h1>
+                    <p class="text-muted-foreground">Manage your blog categories</p>
                 </div>
-                <Link href="/admin/users/create">
-                    <Button>
-                        <Plus class="h-4 w-4" />
-                        Add New
-                    </Button>
+                <Link href="/admin/blog-categories/create">
+
                 </Link>
+                <Create />
             </div>
 
-            <!-- Users Table -->
+            <!-- Blog Categories Table -->
             <div class="rounded-md border mt-4">
                 <Table>
                     <TableHeader>
@@ -75,7 +87,6 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 ID
                             </TableHead>
                             <TableHead class="text-center">Name</TableHead>
-                            <TableHead class="text-center">Email</TableHead>
                             <TableHead class="text-center">
                                 Created At
                             </TableHead>
@@ -85,30 +96,29 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow v-for="user in props.users.data" :key="user.id">
+                        <TableRow v-for="category in props.categories.data" :key="category.id">
                             <TableCell class="text-center">
-                                {{ user.id }}
+                                {{ category.id }}
                             </TableCell>
-                            <TableCell class="text-center">{{ user.name }}</TableCell>
-                            <TableCell class="text-center">{{ user.email }}</TableCell>
+                            <TableCell class="text-center">{{ category.name }}</TableCell>
                             <TableCell class="text-center">
-                                {{ user.created_at }}
+                                {{ category.created_at }}
                             </TableCell>
                             <TableCell class="text-center">
                                 <ActionDropdown
-                                    :editUrl="`/admin/users/${user.id}/edit`"
-                                    :deleteUrl="`/admin/users/${user.id}`"
+                                    :editUrl="`/admin/blog-categories/${category.id}/edit`"
+                                    :deleteUrl="`/admin/blog-categories/${category.id}`"
                                 />
                             </TableCell>
                         </TableRow>
-                        <TableRow v-if="!props.users.data.length">
+                        <TableRow v-if="!props.categories.data.length">
                             <TableCell colspan="5" class="text-center">No data found</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
             </div>
             <div class="py-4 flex justify-between items-center">
-                <TablePagination :paginator="props.users" routePrefix="users" />
+                <TablePagination :paginator="props.categories" routePrefix="blog-categories" />
             </div>
         </div>
 
