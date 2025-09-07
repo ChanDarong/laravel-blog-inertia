@@ -47,7 +47,7 @@ const formSchema = toTypedSchema(z.object({
     path: ['password_confirmation'],
 }));
 
-const { isFieldDirty, handleSubmit, isSubmitting, errors: formErrors, meta } = useForm({
+const { isFieldDirty, handleSubmit, isSubmitting, errors: formErrors } = useForm({
   validationSchema: formSchema,
   validateOnMount: false,
 })
@@ -81,7 +81,7 @@ onMounted(() => {
 const onSubmit = handleSubmit((values) => {
     // Use Inertia's router for submission
     router.post('/admin/users', values, {
-        onSuccess: (page) => {
+        onSuccess: () => {
             // Show success notification
             Notify.success('User created successfully!');
             // Handle success (redirect is handled by backend)

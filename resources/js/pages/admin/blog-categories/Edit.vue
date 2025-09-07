@@ -6,7 +6,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
     DialogClose
 } from '@/components/ui/dialog'
 
@@ -19,23 +18,20 @@ import {
 } from '@/components/ui/form'
 
 import { Button } from '@/components/ui/button'
-import { LoaderCircle, Plus } from 'lucide-vue-next'
+import { LoaderCircle } from 'lucide-vue-next'
 import { Notify } from 'notiflix/build/notiflix-notify-aio'
 
-import { Form, Head, Link, usePage, useForm as useInertiaForm } from '@inertiajs/vue3';
-import BlogCategoryController from '@/actions/App/Http/Controllers/Admin/BlogCategoryController';
+import { Form, useForm as useInertiaForm } from '@inertiajs/vue3';
 import Input from '@/components/ui/input/Input.vue';
-import Label from '@/components/ui/label/Label.vue';
-import InputError from '@/components/InputError.vue';
 import Textarea from '@/components/ui/textarea/Textarea.vue';
 
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 // Props for category data
-const props = defineProps<{
+defineProps<{
     categoryData?: {
         id: number;
         name: string;
@@ -159,7 +155,7 @@ const handleSubmit = async () => {
                 </DialogDescription>
             </DialogHeader>
 
-            <Form v-slot="{ errors, recentlySuccessful }">
+            <Form v-slot="{ errors }">
                 <div class="grid gap-6">
                     <div class="grid gap-2">
                         <FormField v-slot="{ componentField }" name="name">

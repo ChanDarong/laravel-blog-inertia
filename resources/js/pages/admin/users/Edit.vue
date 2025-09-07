@@ -63,7 +63,7 @@ const formSchema = toTypedSchema(z.object({
     path: ['password_confirmation'],
 }));
 
-const { isFieldDirty, handleSubmit, isSubmitting, errors: formErrors, meta, validate } = useForm({
+const { isFieldDirty, handleSubmit, isSubmitting, errors: formErrors } = useForm({
     validationSchema: formSchema,
     initialValues: {
         name: props.user?.name || '',
@@ -123,7 +123,7 @@ const onSubmit = handleSubmit((values) => {
 
     // Use Inertia's router for submission
     router.put(`/admin/users/${props.user.id}`, submitData, {
-        onSuccess: (page) => {
+        onSuccess: () => {
             // Show success notification
             Notify.success('User updated successfully!');
             // Handle success (redirect is handled by backend)

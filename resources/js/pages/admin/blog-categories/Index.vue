@@ -2,27 +2,9 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/vue3'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge'
-import { Trash2, Eye, Plus, Search } from 'lucide-vue-next'
-import { ref, watch } from 'vue'
-import TableFooter from '@/components/ui/table/TableFooter.vue';
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose
-} from '@/components/ui/dialog'
-
+import { Head, Link } from '@inertiajs/vue3'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ref } from 'vue'
 
 import ActionDropdown from '@/components/admin/ActionDropdown.vue';
 import TablePagination from '@/components/admin/TablePagination.vue';

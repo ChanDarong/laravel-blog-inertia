@@ -22,17 +22,15 @@ import { Button } from '@/components/ui/button'
 import { LoaderCircle, Plus } from 'lucide-vue-next'
 import { Notify } from 'notiflix/build/notiflix-notify-aio'
 
-import { Form, Head, Link, usePage, useForm as useInertiaForm } from '@inertiajs/vue3';
+import { Form, useForm as useInertiaForm } from '@inertiajs/vue3';
 import BlogCategoryController from '@/actions/App/Http/Controllers/Admin/BlogCategoryController';
 import Input from '@/components/ui/input/Input.vue';
-import Label from '@/components/ui/label/Label.vue';
-import InputError from '@/components/InputError.vue';
 import Textarea from '@/components/ui/textarea/Textarea.vue';
 
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 const formSchema = toTypedSchema(z.object({
     name: z.string({
@@ -117,7 +115,7 @@ const handleSubmit = async () => {
                 </DialogDescription>
             </DialogHeader>
 
-            <Form v-bind="BlogCategoryController.store()" v-slot="{ errors, recentlySuccessful }">
+            <Form v-bind="BlogCategoryController.store()" v-slot="{ errors }">
                 <div class="grid gap-6">
                     <div class="grid gap-2">
                         <FormField v-slot="{ componentField }" name="name">
