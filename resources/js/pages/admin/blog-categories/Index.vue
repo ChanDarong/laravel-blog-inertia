@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge'
-import { Trash2, Edit, Eye, Plus, Search } from 'lucide-vue-next'
+import { Trash2, Eye, Plus, Search } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
 import TableFooter from '@/components/ui/table/TableFooter.vue';
 
@@ -27,13 +27,15 @@ import {
 import ActionDropdown from '@/components/admin/ActionDropdown.vue';
 import TablePagination from '@/components/admin/TablePagination.vue';
 import Create from './Create.vue';
+import Edit from '../blog-categories/Edit.vue';
+import { Notify } from 'notiflix/build/notiflix-notify-aio'
 
 const props = defineProps<{
     categories: {
         data: Array<{
             id: number;
             name: string;
-            // email: string;
+            description?: string;
             created_at: string;
         }>;
         from: number;
@@ -41,9 +43,7 @@ const props = defineProps<{
         total: number;
         per_page: number;
         current_page: number;
-        // previous page URL
         prev_page_url: string;
-        // next page URL
         next_page_url: string;
     }
 }>();
@@ -58,6 +58,24 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/admin/blog-categories',
     }
 ];
+
+// Reference to the Edit component
+const editComponentRef = ref<InstanceType<typeof Edit> | null>(null);
+
+// Function to open edit dialog
+const openEditDialog = (id: number) => {
+    // Find the category in our current data
+    const category = props.categories.data.find(cat => cat.id === id);
+
+    if (category && editComponentRef.value) {
+        editComponentRef.value.openDialog(category);
+    } else {
+        Notify.failure('Category not found');
+    }
+};
+
+// Watch for flash messages
+// Flash messages will be handled by individual components
 </script>
 
 <template>
@@ -108,6 +126,9 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 <ActionDropdown
                                     :editUrl="`/admin/blog-categories/${category.id}/edit`"
                                     :deleteUrl="`/admin/blog-categories/${category.id}`"
+                                    :isDialog="true"
+                                    :id="category.id"
+                                    @openEditDialog="openEditDialog"
                                 />
                             </TableCell>
                         </TableRow>
@@ -120,6 +141,9 @@ const breadcrumbs: BreadcrumbItem[] = [
             <div class="py-4 flex justify-between items-center">
                 <TablePagination :paginator="props.categories" routePrefix="blog-categories" />
             </div>
+
+            <!-- Edit Component with ref -->
+            <Edit ref="editComponentRef" />
         </div>
 
     </AppLayout>

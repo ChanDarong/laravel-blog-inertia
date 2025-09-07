@@ -17,6 +17,8 @@ const props = defineProps<{
     editUrl: string;
     viewUrl?: string;
     deleteUrl?: string;
+    isDialog?: boolean;
+    id?: number;
 }>();
 
 const deleteRecord = () => {
@@ -28,21 +30,24 @@ const deleteRecord = () => {
         () => {
             if (props.deleteUrl) {
             router.delete(props.deleteUrl, {
-                onSuccess: () => {
-                Notify.success('Item deleted successfully!')
+                onSuccess: (response) => {
+                    const flash = response.props.flash as { success?: string };
+                    if (flash?.success) {
+                        Notify.success(flash.success);
+                    }
                 },
                 onError: (errors: any) => {
-                if (errors.message) {
-                    Notify.failure(errors.message)
-                } else {
-                    Notify.failure('Failed to delete item.')
-                }
+                    if (errors.message) {
+                        Notify.failure(errors.message)
+                    } else {
+                        Notify.failure('Failed to delete item.')
+                    }
                 }
             });
             }
         },
         () => {
-            
+
         },
         {
         },
@@ -58,13 +63,16 @@ const deleteRecord = () => {
                 <Icon icon="mdi:dots-vertical" class="h-5 w-5" />
             </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-            <Link :href="props.editUrl">
+        <DropdownMenuContent align="end">
+            <DropdownMenuItem v-if="props.isDialog" @click="$emit('openEditDialog', props.id)">
+                <Icon icon="lucide:pencil" class="h-5 w-5" /> Edit
+            </DropdownMenuItem>
+            <Link :href="props.editUrl" v-else>
                 <DropdownMenuItem>
                     <Icon icon="lucide:pencil" class="h-5 w-5" /> Edit
                 </DropdownMenuItem>
             </Link>
-            <Link :href="props.viewUrl">
+            <Link :href="props.viewUrl" v-if="props.viewUrl">
                 <DropdownMenuItem>
                     <Icon icon="lucide:eye" class="h-5 w-5" /> View
                 </DropdownMenuItem>

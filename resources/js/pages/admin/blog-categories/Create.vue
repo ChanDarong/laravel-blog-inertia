@@ -20,6 +20,7 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { LoaderCircle, Plus } from 'lucide-vue-next'
+import { Notify } from 'notiflix/build/notiflix-notify-aio'
 
 import { Form, Head, Link, usePage, useForm as useInertiaForm } from '@inertiajs/vue3';
 import BlogCategoryController from '@/actions/App/Http/Controllers/Admin/BlogCategoryController';
@@ -31,11 +32,17 @@ import Textarea from '@/components/ui/textarea/Textarea.vue';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const formSchema = toTypedSchema(z.object({
-    name: z.string({ message: 'Name is required' }).min(2).max(100),
-    description: z.string().max(500).optional()
+    name: z.string({
+            message: 'Name is required'
+        })
+        .min(2, {
+            message: 'Name must be at least 2 characters long'
+        })
+        .max(100),
+    description: z.string().optional()
 }));
 
 const veeForm = useForm({
@@ -57,14 +64,36 @@ const handleSubmit = async () => {
     const { valid } = await veeForm.validate();
 
     if (valid) {
+        // Update Inertia form with current values
+        inertiaForm.name = veeForm.values.name || '';
+        inertiaForm.description = veeForm.values.description || '';
+
         // Submit with Inertia
         inertiaForm.post(BlogCategoryController.store().url, {
-            onSuccess: () => {
+            onSuccess: (response) => {
                 // Reset forms on success
                 veeForm.resetForm();
                 inertiaForm.reset();
                 // Close the dialog
                 isDialogOpen.value = false;
+                // console.log(response.props.flash.success);
+                const flash = response.props.flash as { success?: string };
+                if (flash?.success) {
+                    Notify.success(flash.success);
+                }
+            },
+            onError: (errors) => {
+                // Handle validation errors
+                if (errors) {
+                    Object.keys(errors).forEach(key => {
+                        const message = Array.isArray(errors[key]) ? errors[key][0] : errors[key];
+                        if (message) {
+                            Notify.failure(message);
+                        }
+                    });
+                } else {
+                    Notify.failure('Something went wrong. Please try again.');
+                }
             }
         });
     }

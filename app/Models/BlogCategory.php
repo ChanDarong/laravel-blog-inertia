@@ -32,4 +32,18 @@ class BlogCategory extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    /**
+     * Get the created at attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        if ($value) {
+            return date('d M Y H:i A', strtotime($value));
+        }
+        return $value;
+    }
 }
