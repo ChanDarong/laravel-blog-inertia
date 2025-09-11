@@ -14,6 +14,8 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
 
+import { store } from '@/actions/App/Http/Controllers/Admin/UserController';
+
 import {
   FormControl,
   FormField,
@@ -80,7 +82,7 @@ onMounted(() => {
 // Handle form submission with Inertia
 const onSubmit = handleSubmit((values) => {
     // Use Inertia's router for submission
-    router.post('/admin/users', values, {
+    router.post(store().url, values, {
         onSuccess: () => {
             // Show success notification
             Notify.success('User created successfully!');

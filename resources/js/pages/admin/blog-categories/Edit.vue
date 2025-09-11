@@ -29,14 +29,13 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
 import { ref } from 'vue'
+import { BlogCategory } from '@/types'
+
+import { update } from '@/actions/App/Http/Controllers/Admin/BlogCategoryController';
 
 // Props for category data
 defineProps<{
-    categoryData?: {
-        id: number;
-        name: string;
-        description?: string;
-    } | null;
+    categoryData?: BlogCategory | null;
 }>();
 
 const formSchema = toTypedSchema(z.object({
@@ -113,7 +112,7 @@ const handleSubmit = async () => {
         inertiaForm.description = veeForm.values.description || '';
 
         // Submit with Inertia using PUT method for updates
-        inertiaForm.put(`/admin/blog-categories/${editingCategory.value.id}`, {
+        inertiaForm.put(update(editingCategory.value.id).url, {
             onSuccess: (response) => {
                 // Reset forms on success
                 veeForm.resetForm();

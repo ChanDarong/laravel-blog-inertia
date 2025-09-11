@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
-import { type BreadcrumbItem } from '@/types';
+import { User, type BreadcrumbItem } from '@/types';
 import { dashboard } from '@/routes';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -23,13 +23,10 @@ import {
 } from '@/components/ui/form'
 import FormDescription from '@/components/ui/form/FormDescription.vue';
 
+import { update } from '@/actions/App/Http/Controllers/Admin/UserController';
+
 const props = defineProps<{
-    user: {
-        id: number;
-        name: string;
-        email: string;
-        created_at: string;
-    }
+    user: User
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -122,7 +119,7 @@ const onSubmit = handleSubmit((values) => {
     }
 
     // Use Inertia's router for submission
-    router.put(`/admin/users/${props.user.id}`, submitData, {
+    router.put(update(props.user.id).url, submitData, {
         onSuccess: () => {
             // Show success notification
             Notify.success('User updated successfully!');

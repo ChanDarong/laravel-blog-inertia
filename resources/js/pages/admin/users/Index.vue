@@ -7,27 +7,14 @@ import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus } from 'lucide-vue-next'
 
+import { User, PaginationMeta, UserPagination } from '@/types'
+import { edit, destroy } from '@/actions/App/Http/Controllers/Admin/UserController';
+
 import ActionDropdown from '@/components/admin/ActionDropdown.vue';
 import TablePagination from '@/components/admin/TablePagination.vue';
 
 const props = defineProps<{
-    users: {
-        data: Array<{
-            id: number;
-            name: string;
-            email: string;
-            created_at: string;
-        }>;
-        from: number;
-        to: number;
-        total: number;
-        per_page: number;
-        current_page: number;
-        // previous page URL
-        prev_page_url: string;
-        // next page URL
-        next_page_url: string;
-    }
+    users: UserPagination
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -92,8 +79,8 @@ const breadcrumbs: BreadcrumbItem[] = [
                             </TableCell>
                             <TableCell class="text-center">
                                 <ActionDropdown
-                                    :editUrl="`/admin/users/${user.id}/edit`"
-                                    :deleteUrl="`/admin/users/${user.id}`"
+                                    :editUrl="edit(user.id).url"
+                                    :deleteUrl="destroy(user.id).url"
                                 />
                             </TableCell>
                         </TableRow>

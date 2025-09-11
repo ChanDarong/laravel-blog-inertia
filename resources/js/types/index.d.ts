@@ -1,3 +1,4 @@
+import { User, PaginationMeta, BlogCategory } from './index.d';
 import { InertiaLinkProps } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
 
@@ -32,6 +33,50 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
+}
+
+export interface PaginationMeta {
+    from: number;
+    to: number;
+    total: number;
+    per_page: number;
+    current_page: number;
+    // previous page URL
+    prev_page_url: string;
+    // next page URL
+    next_page_url: string;
+}
+
+export interface UserPagination {
+    data: Array<User>;
+    from: number;
+    to: number;
+    total: number;
+    per_page: number;
+    current_page: number;
+    // previous page URL
+    prev_page_url: string;
+    // next page URL
+    next_page_url: string;
+
+}
+
+export interface BlogCategory {
+    id: number;
+    name: string;
+    description?: string;
+    created_at: string;
+}
+
+export interface BlogCategoryPagination {
+    data: Array<BlogCategory>;
+    from: number;
+    to: number;
+    total: number;
+    per_page: number;
+    current_page: number;
+    prev_page_url: string;
+    next_page_url: string;
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;

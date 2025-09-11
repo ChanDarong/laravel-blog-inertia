@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
-import { type BreadcrumbItem } from '@/types';
+import { BlogCategoryPagination, type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ref } from 'vue'
+
+import { edit, destroy } from '@/actions/App/Http/Controllers/Admin/BlogCategoryController';
 
 import ActionDropdown from '@/components/admin/ActionDropdown.vue';
 import TablePagination from '@/components/admin/TablePagination.vue';
@@ -13,21 +15,7 @@ import Edit from '../blog-categories/Edit.vue';
 import { Notify } from 'notiflix/build/notiflix-notify-aio'
 
 const props = defineProps<{
-    categories: {
-        data: Array<{
-            id: number;
-            name: string;
-            description?: string;
-            created_at: string;
-        }>;
-        from: number;
-        to: number;
-        total: number;
-        per_page: number;
-        current_page: number;
-        prev_page_url: string;
-        next_page_url: string;
-    }
+    categories: BlogCategoryPagination
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -106,8 +94,8 @@ const openEditDialog = (id: number) => {
                             </TableCell>
                             <TableCell class="text-center">
                                 <ActionDropdown
-                                    :editUrl="`/admin/blog-categories/${category.id}/edit`"
-                                    :deleteUrl="`/admin/blog-categories/${category.id}`"
+                                    :editUrl="edit(category.id).url"
+                                    :deleteUrl="destroy(category.id).url"
                                     :isDialog="true"
                                     :id="category.id"
                                     @openEditDialog="openEditDialog"

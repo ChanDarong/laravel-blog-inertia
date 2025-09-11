@@ -13,8 +13,10 @@ import { getInitials } from '@/composables/useInitials';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-vue-next';
+import { BookOpen, Folder, LayoutGrid, Menu, Search, UserCog } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { index as userIndex } from '@/routes/admin/users';
+import { index as blogCategoryIndex } from '@/routes/admin/blog-categories';
 
 interface Props {
     breadcrumbs?: BreadcrumbItem[];
@@ -40,6 +42,16 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'User',
+        href: userIndex(),
+        icon: UserCog,
+    },
+    {
+        title: 'BlogCategory',
+        href: blogCategoryIndex(),
+        icon: Folder,
+    }
 ];
 
 const rightNavItems: NavItem[] = [
